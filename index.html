@@ -6,40 +6,64 @@
   <title>Palm Reading App</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
       padding: 20px;
       text-align: center;
+      color: #222;
+    }
+    h1 {
+      font-size: 2.2em;
+      color: #2c3e50;
+      margin-bottom: 20px;
     }
     video, canvas {
       margin-top: 10px;
       border: 2px dashed #aaa;
+      border-radius: 15px;
       max-width: 100%;
+      backdrop-filter: blur(10px);
     }
     #buttons {
-      margin-top: 10px;
+      margin-top: 15px;
     }
     #output {
       margin-top: 20px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.4);
+      padding: 20px;
+      border-radius: 15px;
       max-width: 500px;
       margin: 20px auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      backdrop-filter: blur(8px);
     }
     button {
-      padding: 10px;
-      margin: 5px;
+      padding: 12px 20px;
+      margin: 8px;
+      border: none;
+      background: #6a11cb;
+      background: linear-gradient(to right, #2575fc, #6a11cb);
+      color: white;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    input[type="file"] {
+      margin-top: 10px;
     }
     footer {
-      margin-top: 30px;
+      margin-top: 40px;
       font-size: 14px;
-      color: #555;
+      color: #333;
     }
     footer span {
       font-weight: bold;
-      color: #222;
+      color: #000;
     }
   </style>
 </head>
@@ -48,8 +72,8 @@
   <h1>🖐️ Palm Reading App</h1>
 
   <div>
-    <button onclick="openCamera()">📷 Open Camera</button>
-    <button onclick="capturePhoto()">📸 Capture</button>
+    <button onclick="playSound(); openCamera()">📷 Open Camera</button>
+    <button onclick="playSound(); capturePhoto()">📸 Capture</button>
     <input type="file" id="imageUpload" accept="image/*" />
   </div>
 
@@ -57,8 +81,8 @@
   <canvas id="palmCanvas" width="400" height="500"></canvas>
 
   <div id="buttons">
-    <button onclick="analyzeLines()">🔍 Analyze</button>
-    <button onclick="clearCanvas()">♻️ Reset</button>
+    <button onclick="playSound(); analyzeLines()">🔍 Analyze</button>
+    <button onclick="playSound(); clearCanvas()">♻️ Reset</button>
   </div>
 
   <div id="output"></div>
@@ -67,14 +91,23 @@
     🔧 Powered by <span>KUSHAL ViP</span>
   </footer>
 
+  <!-- 🔊 Sound Effect -->
+  <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-interface-click-1126.mp3" preload="auto"></audio>
+
   <script>
     const video = document.getElementById("video");
     const canvas = document.getElementById("palmCanvas");
     const ctx = canvas.getContext("2d");
+    const clickSound = document.getElementById("clickSound");
     let img = new Image();
     let drawing = false;
     let lines = [];
     let stream;
+
+    function playSound() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
 
     async function openCamera() {
       try {
@@ -151,4 +184,4 @@
     }
   </script>
 </body>
-</html> 
+</html>
