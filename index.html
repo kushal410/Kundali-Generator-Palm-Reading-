@@ -8,16 +8,13 @@
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f4;
-      margin: 0;
       padding: 20px;
       text-align: center;
     }
-    #upload-section {
-      margin-bottom: 20px;
-    }
-    canvas {
+    video, canvas {
+      margin-top: 10px;
       border: 2px dashed #aaa;
-      cursor: crosshair;
+      max-width: 100%;
     }
     #buttons {
       margin-top: 10px;
@@ -28,23 +25,36 @@
       padding: 15px;
       border-radius: 8px;
       max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 20px auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 10px;
+      margin: 5px;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #555;
+    }
+    footer span {
+      font-weight: bold;
+      color: #222;
     }
   </style>
 </head>
 <body>
 
-  <h1>🖐️ Palm Reading Web App</h1>
+  <h1>🖐️ Palm Reading App</h1>
 
-  <div id="upload-section">
+  <div>
+    <button onclick="openCamera()">📷 Open Camera</button>
+    <button onclick="capturePhoto()">📸 Capture</button>
     <input type="file" id="imageUpload" accept="image/*" />
   </div>
 
-  <div>
-    <canvas id="palmCanvas" width="400" height="500"></canvas>
-  </div>
+  <video id="video" width="400" height="300" autoplay playsinline style="display:none;"></video>
+  <canvas id="palmCanvas" width="400" height="500"></canvas>
 
   <div id="buttons">
     <button onclick="analyzeLines()">🔍 Analyze</button>
@@ -53,14 +63,36 @@
 
   <div id="output"></div>
 
+  <footer>
+    🔧 Powered by <span>KUSHAL ViP</span>
+  </footer>
+
   <script>
+    const video = document.getElementById("video");
     const canvas = document.getElementById("palmCanvas");
     const ctx = canvas.getContext("2d");
     let img = new Image();
     let drawing = false;
     let lines = [];
+    let stream;
 
-    // Load image
+    async function openCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.style.display = "block";
+      } catch (err) {
+        alert("Camera access denied or not available.");
+      }
+    }
+
+    function capturePhoto() {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      video.pause();
+      video.srcObject.getTracks().forEach(track => track.stop());
+      video.style.display = "none";
+    }
+
     document.getElementById("imageUpload").addEventListener("change", function (e) {
       const reader = new FileReader();
       reader.onload = function (event) {
@@ -74,7 +106,6 @@
       reader.readAsDataURL(e.target.files[0]);
     });
 
-    // Draw on canvas
     canvas.addEventListener("mousedown", (e) => {
       drawing = true;
       ctx.beginPath();
@@ -97,7 +128,7 @@
 
     function clearCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
+      if (img.src) ctx.drawImage(img, 0, 0);
       lines = [];
       document.getElementById("output").innerHTML = "";
     }
@@ -109,24 +140,13 @@
       }
 
       let output = "<h3>🔮 Your Palm Reading:</h3><ul>";
-
-      if (lines.length >= 1) {
-        output += "<li><b>Heart Line:</b> You are emotional and intuitive.</li>";
-      }
-      if (lines.length >= 2) {
-        output += "<li><b>Head Line:</b> Logical and focused mind.</li>";
-      }
-      if (lines.length >= 3) {
-        output += "<li><b>Life Line:</b> Strong vitality and energy.</li>";
-      }
-      if (lines.length >= 4) {
-        output += "<li><b>Fate Line:</b> You have a unique life path and destiny.</li>";
-      }
-      if (lines.length >= 5) {
-        output += "<li><b>Extra Line:</b> Deep thinker and introspective.</li>";
-      }
-
+      if (lines.length >= 1) output += "<li><b>Heart Line:</b> Deep emotions and caring nature.</li>";
+      if (lines.length >= 2) output += "<li><b>Head Line:</b> Sharp thinking and decision-making.</li>";
+      if (lines.length >= 3) output += "<li><b>Life Line:</b> Energetic and adventurous spirit.</li>";
+      if (lines.length >= 4) output += "<li><b>Fate Line:</b> A unique and destined life path.</li>";
+      if (lines.length >= 5) output += "<li><b>Extra Lines:</b> Highly intuitive and insightful.</li>";
       output += "</ul>";
+
       document.getElementById("output").innerHTML = output;
     }
   </script>
