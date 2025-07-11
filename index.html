@@ -31,7 +31,6 @@
     button {
       padding: 10px;
       margin: 5px;
-      cursor: pointer;
     }
     footer {
       margin-top: 30px;
@@ -73,6 +72,8 @@
     const canvas = document.getElementById("palmCanvas");
     const ctx = canvas.getContext("2d");
     let img = new Image();
+    let drawing = false;
+    let lines = [];
     let stream;
 
     async function openCamera() {
@@ -90,7 +91,6 @@
       video.pause();
       video.srcObject.getTracks().forEach(track => track.stop());
       video.style.display = "none";
-      autoDrawLines();
     }
 
     document.getElementById("imageUpload").addEventListener("change", function (e) {
@@ -100,53 +100,55 @@
           canvas.width = img.width;
           canvas.height = img.height;
           ctx.drawImage(img, 0, 0);
-          setTimeout(autoDrawLines, 500);
         };
         img.src = event.target.result;
       };
       reader.readAsDataURL(e.target.files[0]);
     });
 
+    canvas.addEventListener("mousedown", (e) => {
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+      lines.push([{ x: e.offsetX, y: e.offsetY }]);
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (!drawing) return;
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      lines[lines.length - 1].push({ x: e.offsetX, y: e.offsetY });
+    });
+
+    canvas.addEventListener("mouseup", () => {
+      drawing = false;
+    });
+
     function clearCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (img.src) ctx.drawImage(img, 0, 0);
+      lines = [];
       document.getElementById("output").innerHTML = "";
     }
 
     function analyzeLines() {
-      let output = "<h3>🔮 Your Palm Reading:</h3><ul>";
-      output += "<li><b>Heart Line:</b> Deep emotions and caring nature.</li>";
-      output += "<li><b>Head Line:</b> Sharp thinking and decision-making.</li>";
-      output += "<li><b>Life Line:</b> Energetic and adventurous spirit.</li>";
-      output += "<li><b>Fate Line:</b> A unique and destined life path.</li>";
-      output += "<li><b>Intuition:</b> Highly intuitive and spiritually aware.</li>";
-      output += "</ul>";
-      document.getElementById("output").innerHTML = output;
-    }
-
-    function autoDrawLines() {
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-
-      // Simple grayscale edge effect (mock line detection)
-      for (let i = 0; i < data.length; i += 4) {
-        let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-        let value = avg < 80 ? 0 : 255; // dark edges
-        data[i] = data[i + 1] = data[i + 2] = value;
+      if (lines.length === 0) {
+        alert("Please draw some lines first!");
+        return;
       }
 
-      ctx.putImageData(imageData, 0, 0);
+      let output = "<h3>🔮 Your Palm Reading:</h3><ul>";
+      if (lines.length >= 1) output += "<li><b>Heart Line:</b> Deep emotions and caring nature.</li>";
+      if (lines.length >= 2) output += "<li><b>Head Line:</b> Sharp thinking and decision-making.</li>";
+      if (lines.length >= 3) output += "<li><b>Life Line:</b> Energetic and adventurous spirit.</li>";
+      if (lines.length >= 4) output += "<li><b>Fate Line:</b> A unique and destined life path.</li>";
+      if (lines.length >= 5) output += "<li><b>Extra Lines:</b> Highly intuitive and insightful.</li>";
+      output += "</ul>";
 
-      // Simulated red lines on palm center
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(canvas.width * 0.3, canvas.height * 0.5);
-      ctx.lineTo(canvas.width * 0.7, canvas.height * 0.5);
-      ctx.moveTo(canvas.width * 0.4, canvas.height * 0.4);
-      ctx.lineTo(canvas.width * 0.6, canvas.height * 0.6);
-      ctx.stroke();
+      document.getElementById("output").innerHTML = output;
     }
   </script>
 </body>
-</html>
+</html> 
