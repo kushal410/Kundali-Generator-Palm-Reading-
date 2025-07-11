@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Palm Reading App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    #upload-section {
+      margin-bottom: 20px;
+    }
+    canvas {
+      border: 2px dashed #aaa;
+      cursor: crosshair;
+    }
+    #buttons {
+      margin-top: 10px;
+    }
+    #output {
+      margin-top: 20px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🖐️ Palm Reading Web App</h1>
+
+  <div id="upload-section">
+    <input type="file" id="imageUpload" accept="image/*" />
+  </div>
+
+  <div>
+    <canvas id="palmCanvas" width="400" height="500"></canvas>
+  </div>
+
+  <div id="buttons">
+    <button onclick="analyzeLines()">🔍 Analyze</button>
+    <button onclick="clearCanvas()">♻️ Reset</button>
+  </div>
+
+  <div id="output"></div>
+
+  <script>
+    const canvas = document.getElementById("palmCanvas");
+    const ctx = canvas.getContext("2d");
+    let img = new Image();
+    let drawing = false;
+    let lines = [];
+
+    // Load image
+    document.getElementById("imageUpload").addEventListener("change", function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        img.onload = function () {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    // Draw on canvas
+    canvas.addEventListener("mousedown", (e) => {
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+      lines.push([{ x: e.offsetX, y: e.offsetY }]);
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (!drawing) return;
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      lines[lines.length - 1].push({ x: e.offsetX, y: e.offsetY });
+    });
+
+    canvas.addEventListener("mouseup", () => {
+      drawing = false;
+    });
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      lines = [];
+      document.getElementById("output").innerHTML = "";
+    }
+
+    function analyzeLines() {
+      if (lines.length === 0) {
+        alert("Please draw some lines first!");
+        return;
+      }
+
+      let output = "<h3>🔮 Your Palm Reading:</h3><ul>";
+
+      if (lines.length >= 1) {
+        output += "<li><b>Heart Line:</b> You are emotional and intuitive.</li>";
+      }
+      if (lines.length >= 2) {
+        output += "<li><b>Head Line:</b> Logical and focused mind.</li>";
+      }
+      if (lines.length >= 3) {
+        output += "<li><b>Life Line:</b> Strong vitality and energy.</li>";
+      }
+      if (lines.length >= 4) {
+        output += "<li><b>Fate Line:</b> You have a unique life path and destiny.</li>";
+      }
+      if (lines.length >= 5) {
+        output += "<li><b>Extra Line:</b> Deep thinker and introspective.</li>";
+      }
+
+      output += "</ul>";
+      document.getElementById("output").innerHTML = output;
+    }
+  </script>
+</body>
+</html>
