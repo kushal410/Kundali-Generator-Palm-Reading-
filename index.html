@@ -1,6 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <title>Kundali Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background-color: #f3f3f3;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+    pre {
+      background: #222;
+      color: #0f0;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Kundali Generator (Nepali/Indian Style)</h1>
+
+<form id="kundaliForm">
+  <label>Full Name:</label>
+  <input type="text" name="name" required>
+
+  <label>Date of Birth:</label>
+  <input type="date" name="dob" required>
+
+  <label>Time of Birth:</label>
+  <input type="time" name="tob" required>
+
+  <label>Place of Birth (City):</label>
+  <input type="text" name="pob" required placeholder="e.g. Kathmandu">
+
+  <button type="submit">Generate Kundali</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+  document.getElementById("kundaliForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const form = new FormData(this);
+    const name = form.get("name");
+    const dob = form.get("dob");
+    const tob = form.get("tob");
+    const pob = form.get("pob");
+
+    const [year, month, day] = dob.split("-");
+    const [hour, minute] = tob.split(":");
+
+    // 🧭 Use fixed lat/lon for demo. You can add Google Geocoding for live location conversion.
+    let latitude = 27.7172;   // Kathmandu
+    let longitude = 85.3240;
+    let timezone = 5.75;      // Nepal Time
+
+    // ✅ API credentials (replace with your actual credentials from vedicrishi.com)
+    const userId = "YOUR_USER_ID";
+    const apiKey = "YOUR_API_KEY";
+
+    const url = "https://json.astrologyapi.com/v1/basic_horoscope";
+
+    const body = {
+      day: parseInt(day),
+      month: parseInt(month),
+      year: parseInt(year),
+      hour: parseInt(hour),
+      min: parseInt(minute),
+      lat: latitude,
+      lon: longitude,
+      tzone: timezone
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": "Basic " + btoa(userId + ":" + apiKey),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await response.json();
+
+      if (data && !data.error) {
+        document.getElementById("result").innerHTML = `
+          <h2>Kundali for ${name}</h2>
+          <p><strong>Date:</strong> ${dob}</p>
+          <p><strong>Time:</strong> ${tob}</p>
+          <p><strong>Place:</strong> ${pob}</p>
+          <h3>Chart Data:</h3>
+          <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+      } else {
+        document.getElementById("result").innerHTML = `<p style="color:red;">Error: ${data.message || "Something went wrong."}</p>`;
+      }
+
+    } catch (error) {
+      console.error(error);
+      document.getElementById("result").innerHTML = `<p style="color:red;">API call failed. Check credentials or network.</p>`;
+    }
+  });
+</script>
+
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Palm Reading App</title>
@@ -190,128 +316,5 @@
 </body>
 </html>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Kundali Generator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background-color: #f3f3f3;
-    }
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin-bottom: 20px;
-    }
-    input, button {
-      padding: 10px;
-      margin-top: 10px;
-      width: 100%;
-    }
-    pre {
-      background: #222;
-      color: #0f0;
-      padding: 15px;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-  </style>
-</head>
-<body>
 
-<h1>Kundali Generator (Nepali/Indian Style)</h1>
-
-<form id="kundaliForm">
-  <label>Full Name:</label>
-  <input type="text" name="name" required>
-
-  <label>Date of Birth:</label>
-  <input type="date" name="dob" required>
-
-  <label>Time of Birth:</label>
-  <input type="time" name="tob" required>
-
-  <label>Place of Birth (City):</label>
-  <input type="text" name="pob" required placeholder="e.g. Kathmandu">
-
-  <button type="submit">Generate Kundali</button>
-</form>
-
-<div id="result"></div>
-
-<script>
-  document.getElementById("kundaliForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const form = new FormData(this);
-    const name = form.get("name");
-    const dob = form.get("dob");
-    const tob = form.get("tob");
-    const pob = form.get("pob");
-
-    const [year, month, day] = dob.split("-");
-    const [hour, minute] = tob.split(":");
-
-    // 🧭 Use fixed lat/lon for demo. You can add Google Geocoding for live location conversion.
-    let latitude = 27.7172;   // Kathmandu
-    let longitude = 85.3240;
-    let timezone = 5.75;      // Nepal Time
-
-    // ✅ API credentials (replace with your actual credentials from vedicrishi.com)
-    const userId = "YOUR_USER_ID";
-    const apiKey = "YOUR_API_KEY";
-
-    const url = "https://json.astrologyapi.com/v1/basic_horoscope";
-
-    const body = {
-      day: parseInt(day),
-      month: parseInt(month),
-      year: parseInt(year),
-      hour: parseInt(hour),
-      min: parseInt(minute),
-      lat: latitude,
-      lon: longitude,
-      tzone: timezone
-    };
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Authorization": "Basic " + btoa(userId + ":" + apiKey),
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-      });
-
-      const data = await response.json();
-
-      if (data && !data.error) {
-        document.getElementById("result").innerHTML = `
-          <h2>Kundali for ${name}</h2>
-          <p><strong>Date:</strong> ${dob}</p>
-          <p><strong>Time:</strong> ${tob}</p>
-          <p><strong>Place:</strong> ${pob}</p>
-          <h3>Chart Data:</h3>
-          <pre>${JSON.stringify(data, null, 2)}</pre>
-        `;
-      } else {
-        document.getElementById("result").innerHTML = `<p style="color:red;">Error: ${data.message || "Something went wrong."}</p>`;
-      }
-
-    } catch (error) {
-      console.error(error);
-      document.getElementById("result").innerHTML = `<p style="color:red;">API call failed. Check credentials or network.</p>`;
-    }
-  });
-</script>
-
-</body>
-</html>
 
