@@ -1,320 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Kundali Generator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kundali & Palm Reading App</title>
   <style>
     body {
-      font-family: Arial;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      margin: 0;
       padding: 20px;
-      background-color: #f3f3f3;
+      color: #222;
     }
-    form {
+    h1, h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .section {
       background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin-bottom: 20px;
+      padding: 25px;
+      margin: 20px auto;
+      border-radius: 15px;
+      max-width: 800px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
     input, button {
       padding: 10px;
       margin-top: 10px;
       width: 100%;
+      max-width: 400px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      display: block;
+    }
+    button {
+      background: linear-gradient(to right, #2575fc, #6a11cb);
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    canvas, video {
+      border: 2px dashed #888;
+      border-radius: 10px;
+      max-width: 100%;
+      margin-top: 15px;
+    }
+    #output, #kundaliResult {
+      margin-top: 20px;
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 10px;
     }
     pre {
       background: #222;
       color: #0f0;
       padding: 15px;
-      border-radius: 6px;
+      border-radius: 10px;
       overflow-x: auto;
     }
-  </style>
-</head>
-<body>
-
-<h1>Kundali Generator (Nepali/Indian Style)</h1>
-
-<form id="kundaliForm">
-  <label>Full Name:</label>
-  <input type="text" name="name" required>
-
-  <label>Date of Birth:</label>
-  <input type="date" name="dob" required>
-
-  <label>Time of Birth:</label>
-  <input type="time" name="tob" required>
-
-  <label>Place of Birth (City):</label>
-  <input type="text" name="pob" required placeholder="e.g. Kathmandu">
-
-  <button type="submit">Generate Kundali</button>
-</form>
-
-<div id="result"></div>
-
-<script>
-  document.getElementById("kundaliForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const form = new FormData(this);
-    const name = form.get("name");
-    const dob = form.get("dob");
-    const tob = form.get("tob");
-    const pob = form.get("pob");
-
-    const [year, month, day] = dob.split("-");
-    const [hour, minute] = tob.split(":");
-
-    // 🧭 Use fixed lat/lon for demo. You can add Google Geocoding for live location conversion.
-    let latitude = 27.7172;   // Kathmandu
-    let longitude = 85.3240;
-    let timezone = 5.75;      // Nepal Time
-
-    // ✅ API credentials (replace with your actual credentials from vedicrishi.com)
-    const userId = "YOUR_USER_ID";
-    const apiKey = "YOUR_API_KEY";
-
-    const url = "https://json.astrologyapi.com/v1/basic_horoscope";
-
-    const body = {
-      day: parseInt(day),
-      month: parseInt(month),
-      year: parseInt(year),
-      hour: parseInt(hour),
-      min: parseInt(minute),
-      lat: latitude,
-      lon: longitude,
-      tzone: timezone
-    };
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Authorization": "Basic " + btoa(userId + ":" + apiKey),
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-      });
-
-      const data = await response.json();
-
-      if (data && !data.error) {
-        document.getElementById("result").innerHTML = `
-          <h2>Kundali for ${name}</h2>
-          <p><strong>Date:</strong> ${dob}</p>
-          <p><strong>Time:</strong> ${tob}</p>
-          <p><strong>Place:</strong> ${pob}</p>
-          <h3>Chart Data:</h3>
-          <pre>${JSON.stringify(data, null, 2)}</pre>
-        `;
-      } else {
-        document.getElementById("result").innerHTML = `<p style="color:red;">Error: ${data.message || "Something went wrong."}</p>`;
-      }
-
-    } catch (error) {
-      console.error(error);
-      document.getElementById("result").innerHTML = `<p style="color:red;">API call failed. Check credentials or network.</p>`;
-    }
-  });
-</script>
-
-</body>
-</html>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Palm Reading App</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
-      padding: 20px;
-      text-align: center;
-      color: #222;
-    }
-    h1 {
-      font-size: 2.2em;
-      color: #2c3e50;
-      margin-bottom: 20px;
-    }
-    video, canvas {
-      margin-top: 10px;
-      border: 2px dashed #aaa;
-      border-radius: 15px;
-      max-width: 100%;
-      backdrop-filter: blur(10px);
-    }
-    #buttons {
-      margin-top: 15px;
-    }
-    #output {
-      margin-top: 20px;
-      background: rgba(255, 255, 255, 0.4);
-      padding: 20px;
-      border-radius: 15px;
-      max-width: 500px;
-      margin: 20px auto;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      backdrop-filter: blur(8px);
-    }
-    button {
-      padding: 12px 20px;
-      margin: 8px;
-      border: none;
-      background: #6a11cb;
-      background: linear-gradient(to right, #2575fc, #6a11cb);
-      color: white;
-      border-radius: 25px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    input[type="file"] {
-      margin-top: 10px;
-    }
     footer {
-      margin-top: 40px;
+      text-align: center;
       font-size: 14px;
-      color: #333;
+      margin: 30px 0 10px;
     }
     footer span {
       font-weight: bold;
-      color: #000;
+      color: black;
     }
   </style>
 </head>
 <body>
 
- <h1>🖐️ Palm Reading App</h1>
-<p style="font-size: 1.2em; color: #333; margin-top: -10px; margin-bottom: 20px; font-style: italic;">
-  "Your future is in your hands. Let your palm reveal the path."
-</p>
+  <h1>🧘 Kundali & 🖐️ Palm Reading</h1>
 
+  <!-- 🔮 Kundali Section -->
+  <div class="section">
+    <h2>🧘 Generate Your Kundali</h2>
+    <form id="kundaliForm">
+      <input type="text" name="name" required placeholder="Full Name">
+      <input type="date" name="dob" required>
+      <input type="time" name="tob" required>
+      <input type="text" name="pob" required placeholder="Place of Birth (City)">
+      <button type="submit">Generate Kundali</button>
+    </form>
+    <div id="kundaliResult"></div>
+  </div>
 
-  <div>
+  <!-- ✋ Palm Reading Section -->
+  <div class="section">
+    <h2>🖐️ Palm Reading</h2>
     <button onclick="playSound(); openCamera()">📷 Open Camera</button>
     <button onclick="playSound(); capturePhoto()">📸 Capture</button>
-    <input type="file" id="imageUpload" accept="image/*" />
-  </div>
-
-  <video id="video" width="400" height="300" autoplay playsinline style="display:none;"></video>
-  <canvas id="palmCanvas" width="400" height="500"></canvas>
-
-  <div id="buttons">
+    <input type="file" id="imageUpload" accept="image/*">
+    <video id="video" width="400" height="300" autoplay playsinline style="display:none;"></video>
+    <canvas id="palmCanvas" width="400" height="500"></canvas>
     <button onclick="playSound(); analyzeLines()">🔍 Analyze</button>
     <button onclick="playSound(); clearCanvas()">♻️ Reset</button>
+    <div id="output"></div>
   </div>
 
-  <div id="output"></div>
-
-  <footer>
-    🔧 Powered by <span>KUSHAL ViP</span>
-  </footer>
-
-  <!-- 🔊 Sound Effect -->
+  <!-- 🔊 Click Sound -->
   <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-interface-click-1126.mp3" preload="auto"></audio>
 
-  <script>
-    const video = document.getElementById("video");
-    const canvas = document.getElementById("palmCanvas");
-    const ctx = canvas.getContext("2d");
-    const clickSound = document.getElementById("clickSound");
-    let img = new Image();
-    let drawing = false;
-    let lines = [];
-    let stream;
-
-    function playSound() {
-      clickSound.currentTime = 0;
-      clickSound.play();
-    }
-
-    async function openCamera() {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-        video.style.display = "block";
-      } catch (err) {
-        alert("Camera access denied or not available.");
-      }
-    }
-
-    function capturePhoto() {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      video.pause();
-      video.srcObject.getTracks().forEach(track => track.stop());
-      video.style.display = "none";
-    }
-
-    document.getElementById("imageUpload").addEventListener("change", function (e) {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        img.onload = function () {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    });
-
-    canvas.addEventListener("mousedown", (e) => {
-      drawing = true;
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-      lines.push([{ x: e.offsetX, y: e.offsetY }]);
-    });
-
-    canvas.addEventListener("mousemove", (e) => {
-      if (!drawing) return;
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      lines[lines.length - 1].push({ x: e.offsetX, y: e.offsetY });
-    });
-
-    canvas.addEventListener("mouseup", () => {
-      drawing = false;
-    });
-
-    function clearCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (img.src) ctx.drawImage(img, 0, 0);
-      lines = [];
-      document.getElementById("output").innerHTML = "";
-    }
-
-    function analyzeLines() {
-      if (lines.length === 0) {
-        alert("Please draw some lines first!");
-        return;
-      }
-
-      let output = "<h3>🔮 Your Palm Reading:</h3><ul>";
-      if (lines.length >= 1) output += "<li><b>Heart Line:</b> Deep emotions and caring nature.</li>";
-      if (lines.length >= 2) output += "<li><b>Head Line:</b> Sharp thinking and decision-making.</li>";
-      if (lines.length >= 3) output += "<li><b>Life Line:</b> Energetic and adventurous spirit.</li>";
-      if (lines.length >= 4) output += "<li><b>Fate Line:</b> A unique and destined life path.</li>";
-      if (lines.length >= 5) output += "<li><b>Extra Lines:</b> Highly intuitive and insightful.</li>";
-      output += "</ul>";
-
-      document.getElementById("output").innerHTML = output;
-    }
-  </script>
-</body>
-</html>
-
-
-
+  <footer>🔧 Powered by <span>KUSHAL ViP</span></footer>
