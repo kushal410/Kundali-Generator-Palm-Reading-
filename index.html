@@ -2,79 +2,134 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kundali & Palm Reading App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Real Kundali Generator</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
-      margin: 0;
-      padding: 20px;
-      color: #222;
-    }
-    h1, h2 {
-      text-align: center;
-      color: #2c3e50;
-    }
-    .section {
-      background: white;
-      padding: 25px;
-      margin: 20px auto;
-      border-radius: 15px;
-      max-width: 800px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-    input, button {
-      padding: 10px;
-      margin-top: 10px;
-      width: 100%;
-      max-width: 400px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      display: block;
-    }
-    button {
-      background: linear-gradient(to right, #2575fc, #6a11cb);
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    button:hover {
-      transform: scale(1.03);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    canvas, video {
-      border: 2px dashed #888;
-      border-radius: 10px;
-      max-width: 100%;
-      margin-top: 15px;
-    }
-    #output, #kundaliResult {
-      margin-top: 20px;
-      background: #f0f0f0;
-      padding: 15px;
-      border-radius: 10px;
-    }
-    pre {
-      background: #222;
-      color: #0f0;
-      padding: 15px;
-      border-radius: 10px;
-      overflow-x: auto;
-    }
-    footer {
-      text-align: center;
-      font-size: 14px;
-      margin: 30px 0 10px;
-    }
-    footer span {
-      font-weight: bold;
-      color: black;
-    }
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+    input, select, button { padding: 10px; margin: 5px 0; width: 100%; max-width: 200px; }
+    #result { white-space: pre-wrap; background: #222; color: #0f0; padding: 15px; border-radius: 8px; margin-top: 20px; }
+    label { display: block; margin-top: 15px; }
   </style>
 </head>
 <body>
+
+  <h1>Real Kundali Generator</h1>
+  <form id="kundaliForm">
+    <label>Full Name: <input type="text" name="name" required /></label>
+    <label>Date of Birth: <input type="date" id="dob" required /></label>
+
+    <label>Time of Birth:</label>
+    <input type="number" id="hour" min="1" max="12" placeholder="Hour (1-12)" required />
+    <input type="number" id="minute" min="0" max="59" placeholder="Minute (0-59)" required />
+    <select id="ampm" required>
+      <option value="AM">AM</option>
+      <option value="PM">PM</option>
+    </select>
+
+    <label>Place of Birth (City): <input type="text" id="place" placeholder="e.g. Kathmandu" required /></label>
+
+    <button type="submit">Generate Kundali</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById("kundaliForm");
+    const resultDiv = document.getElementById("result");
+
+    async function getLatLon(city) {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}`);
+      const data = await response.json();
+      if(data && data.length > 0){
+        return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+      } else {
+        throw new Error("Location not found");
+      }
+    }
+
+    function convertTo24Hour(hour, ampm) {
+      hour = parseInt(hour);
+      if(ampm === "PM" && hour !== 12) hour += 12;
+      if(ampm === "AM" && hour === 12) hour = 0;
+      return hour;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      resultDiv.textContent = "Calculating Kundali... Please wait.";
+
+      try {
+        const name = form.name.value.trim();
+        const dob = document.getElementById("dob").value;
+        const hour12 = document.getElementById("hour").value;
+        const minute = document.getElementById("minute").value;
+        const ampm = document.getElementById("ampm").value;
+        const place = document.getElementById("place").value.trim();
+
+        if(!dob) throw new Error("Please select DOB");
+        if(!hour12 || !minute) throw new Error("Please enter time");
+
+        const [year, month, day] = dob.split("-").map(Number);
+
+        // Get lat lon from place
+        const { lat, lon } = await getLatLon(place);
+
+        // Timezone offset in hours
+        // For demo, we'll use Intl API, but it's not perfect for all locations.
+        // You can hardcode Nepal 5.75 or improve with timezone lookup libs.
+        const timezone = new Date().toLocaleString("en-US", {timeZoneName: "short"});
+        let tzone = 0;
+        // Approximate timezone offset in hours (you can improve)
+        const tzOffsetMinutes = new Date().getTimezoneOffset();
+        tzone = -tzOffsetMinutes / 60;
+
+        const hour24 = convertTo24Hour(hour12, ampm);
+
+        // Your API credentials here
+        const userId = "YOUR_USER_ID";
+        const apiKey = "YOUR_API_KEY";
+
+        const apiUrl = "https://json.astrologyapi.com/v1/basic_horoscope";
+
+        const requestBody = {
+          day: day,
+          month: month,
+          year: year,
+          hour: hour24,
+          min: parseInt(minute),
+          lat: lat,
+          lon: lon,
+          tzone: tzone
+        };
+
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Authorization": "Basic " + btoa(userId + ":" + apiKey),
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+
+        if(data.error) {
+          resultDiv.textContent = "Error: " + data.message;
+          return;
+        }
+
+        // You can replace this with better chart UI code:
+        resultDiv.textContent = `Kundali for ${name}:\n\n${JSON.stringify(data, null, 2)}`;
+
+      } catch (err) {
+        resultDiv.textContent = "Error: " + err.message;
+      }
+    });
+  </script>
+
+</body>
+</html>
+
 
   <h1>🧘 Kundali & 🖐️ Palm Reading</h1>
 
