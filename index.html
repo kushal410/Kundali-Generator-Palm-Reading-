@@ -1,407 +1,282 @@
-<div id="container">           
-            <div class="container no-padding-l no-padding-r">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Palm & Kundali App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
 
-    <div id="roundborder" class="ui-container ui-margin-tb">
-    <div class="ui-content bg-light-gray">
-        <h1 align="center">
-            Kundli
-        </h1>
-        <div class="card-view-content">
-            <img src="/kundli/images/kundali.jpg" alt="Kundli - Get your birth chart" align="left" width="56" height="56" class="ui-margin-r">
-            <p>
-                Kundli is the term used for Birth Chart in Vedic Astrology. Twelve houses of Kundli
-                show ascendant and planet position in various zodiac signs at the time of birth
-                as seen from the place of birth.</p>
-        </div>
-        <div class="card-view-content">
-        <div class="ui-form-widget">
-        <h2 class="text-center ui-margin-b"> Get Your Kundli by Date of Birth</h2> 
-            
-<form name="kundlibirthdetails" action="//ascloud.astrosage.com/cloud/createsession.asp" class="form-horizontal" method="post" onsubmit="return formValidation();">
+    h1, h2 {
+      color: #2c3e50;
+      margin-top: 40px;
+    }
 
-<fieldset class="form-box">
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
 
-    <div class="row">
-        <div class="col-xs-7">
-            <label for="Name" class="control-label">
-                Name</label>
-            <input type="text" name="name" id="Name" class="form-control" placeholder="Name" maxlength="100" tabindex="1">
-        </div>
-        <div class="col-xs-5">
-            <label for="sex" class="control-label">
-                Gender</label>
-            <div class="switch-field">
-                <input type="radio" id="male" name="sex" value="male" checked="" tabindex="2">
-                <label for="male" class="radio-ones"> Male</label>
-                <input type="radio" id="female" name="sex" value="female" tabindex="3">
-                <label for="female" class="radio-twos">Female</label>
-            </div>
-        </div>
-    </div>
- <div class="row"> 
-    <div class="col-xs-4">
-    <label for="Day" class="control-label">Day</label>
-        <input type="number" class="form-control" name="day" id="Day" placeholder="Day" maxlength="2" tabindex="4" value="" data-original-title="Day">
-    </div>
-    <div class="col-xs-4">
-    <label for="Month" class="control-label">Month</label>
-        <input type="number" class="form-control input-sm-1" name="month" id="Month" placeholder="Month" maxlength="2" tabindex="5" value="" data-original-title="Month">
-    </div>
-    <div class="col-xs-4">
-    <label for="Year" class="control-label">Year</label>
-        <input type="number" class="form-control input-sm-3" name="year" id="Year" placeholder="Year" maxlength="4" tabindex="6" value="" data-original-title="Year">
-    </div>
-</div>
+    .section {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin-top: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
 
-    <div class="row">
-                <div class="col-xs-4">
-                <label for="Hrs" class="control-label">Hrs</label>
-                    <input type="number" class="form-control" name="hrs" id="Hrs" placeholder="Hours" maxlength="2" tabindex="7" value="" data-original-title="Hours">
-                </div>
-                <div class="col-xs-4">
-                <label for="Min" class="control-label">Min</label>
-                    <input type="number" class="form-control input-sm-1" name="min" id="Min" placeholder="Minute" maxlength="2" tabindex="8" value="" data-original-title="Minute">
-                </div>
-                <div class="col-xs-4">
-                <label for="Sec" class="control-label">Sec</label>
-                    <input type="number" class="form-control input-sm-3" name="sec" id="Sec" placeholder="Second" maxlength="2" tabindex="9" value="" data-original-title="Second">
-                </div>
-            
-    </div>
-    <div class="row">
-       <div class="col-sm-12">
-       <label for="place" class="control-label">
-            Place of Birth</label>
-            <input type="text" name="place" id="place" value="" class="form-control ac_input" placeholder="Place of Birth" tabindex="10" autocomplete="off">
-            <span id="dstval"></span>
-        </div>
-    </div>
-    <div class="pull-left ui-margin-t">
-        <a id="aTag" href="javascript:toggleAndChangeText();" class="btn btn-white card-shadow br-radius btn-sm">[+]
-            Settings</a>
-    </div>
-    <div class="ui-margin-t pull-right">
-        <a href="javaScript:void(0)" onclick="findlocation('CurrentLocation');" class="btn btn-white card-shadow br-radius btn-sm">
-            Current Location</a> <a href="javaScript:void(0)" onclick="findlocation('CurrentTime');" class="btn btn-white card-shadow br-radius btn-sm">Now</a>
-    </div>
-</fieldset>
-<div id="divToToggle" style="display: none;" class="clear">
-<fieldset class="form-box">
-        <h2 align="center">
-            Advanced Settings <a href="javascript:void(0)" onclick="getgpsAccuracy();" class="pull-right" style="font-size: 15px;"><u>GPS Accuracy</u></a></h2>
-        <div class="row">
-            
-                    <div class="col-xs-4">
-                    <label for="LongDeg" class="control-label">LongDeg</label>
-                        <input class="form-control" type="text" name="longdeg" autocomplete="off" maxlength="3" placeholder="LongDegree" id="LongDeg" tabindex="10" data-original-title="Longitude Degree">
-                    </div>
-                    <div class="col-xs-4">
-                    <label for="LongMin" class="control-label">LongMin</label>
-                        <input class="form-control" type="text" name="longmin" autocomplete="off" id="LongMin" placeholder="LongMinute" tabindex="11" maxlength="2" data-original-title="Longitude Minute">
-                    </div>
-                    <div class="col-xs-4">
-                    <label for="LongEW" class="control-label">LongEW</label>
-                        <select class="form-control" name="longew" id="LongEW" tabindex="12" data-original-title="Longitude Direction">
-                            <option value="LongEW">LongEW</option>
-                            <option value="E">
-                                E</option>
-                            <option value="W">
-                                W</option>
-                        </select>
-                    </div>
-                    <input type="hidden" id="accuracy" name="accuracy">
-               
-        </div>
-        <div class="row">
-                    <div class="col-xs-4">
-                    <label for="LatDeg" class="control-label">LatDeg</label>
-                        <input class="form-control" type="text" name="latdeg" autocomplete="off" id="LatDeg" placeholder="LatDegree" maxlength="3" tabindex="13" data-original-title="Latitude Degree">
-                    </div>
-                    <div class="col-xs-4">
-                    <label for="LatMin" class="control-label">LatMin</label>
-                        <input class="form-control" type="text" name="latmin" autocomplete="off" id="LatMin" placeholder="LatMinute" tabindex="14" maxlength="2" data-original-title="Latitude Minute">
-                    </div>
-                    <div class="col-xs-4">
-                    <label for="LatNS" class="control-label">LatNS</label>
-                        <select class="form-control" name="latns" id="LatNS" tabindex="15" data-original-title="Latitude Direction">
-                            <option value="LatNS">LatNS</option>
-                            <option value="N">
-                                N</option>
-                            <option value="S">
-                                S</option>
-                        </select>
-                    </div>
-        </div>
-        <div class="row">
-            
-            <div class="col-sm-12">
-            <label for="timeZone" class="control-label">
-                Time Zone</label>
-                <input class="form-control" type="text" name="timezone" autocomplete="off" id="timeZone" maxlength="8" placeholder="Timezone" tabindex="16" data-original-title="Time Zone in hours e.g. 5.5 for India">
-            </div>
-        </div>
-        <div class="row">
-           
-            <div class="col-sm-12">
-             <label for="ayanamsa" class="control-label">
-                Ayanamsa</label>
-                <select name="ayanamsa" id="ayanamsa" class="form-control" tabindex="17">
-                    <option value="0">N.C.Lahiri</option>
-                    <option value="1">K.P. New</option>
-                    <option value="2">K.P. Old</option>
-                    <option value="3">B.V.Raman</option>
-                    <option value="4">KP Khullar</option>
-                    <option value="5">Sayan</option>
-                </select>
-            </div>
-        </div>
-        <div class="row">
-          
-            <div class="col-sm-12">
-              <label for="charting" class="control-label">
-                Chart Style</label>
-                <select name="charting" id="charting" class="form-control" tabindex="18">
-                    <option value="0">North Indian</option>
-                    <option value="1">South Indian</option>
-                </select>
-            </div>
-        </div>
-        <div class="row">
-                    <div class="col-xs-6">
-                    <label for="kphn" class="control-label">
-                KP Horary Number (1-249)</label>
-                        <input type="text" class="form-control" name="kphn" size="3" value="0" id="kphn" maxlength="3" autocomplete="off" placeholder="kphn" tabindex="19">
-                    </div>
-                    <div class="col-xs-6">
-                    <p> &nbsp;</p>
-                        <a href="javascript:void(0)" onclick="fillkphn();"><u>Random KP Number</u></a>
-                    </div>
-        </div>
-    </fieldset>
-</div>
-<div align="center" class="ui-margin-t clear">
-    
-    <button type="submit" id="submit" name="submit" value="Show Kundli" class="btn btn-deep-orange card-shadow br-radius btn-small" tabindex="19">
-        Show Kundli</button>
-        
-    
-</div>
-<input type="hidden" name="referrer" value="">
-<input type="hidden" name="timezoneid" id="timezoneid" value="">
-<input type="hidden" value="" name="swa">
-<input type="hidden" value="1" name="vfd">
-</form>  
-<script type="text/javascript" src="/dist/js/as-autojump.min.js"></script>
+    button, input[type="file"], input[type="text"], input[type="date"], input[type="time"] {
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+      width: 100%;
+      max-width: 400px;
+      font-size: 1em;
+    }
 
-        </div>
-        </div>
-        
-            <!--#xinclude virtual = '/include/adincontent.asp'-->
-            <div class="card-view-content">
-            <h2>
-                Free Online Kundli Software 
-            </h2>
-            <p>
-                Kundli is the life plan of an individual. All of us have a Kundali, which can help
-                in understanding a lot of things. That is why, AstroSage introduced the world with
-                free Kundali software around 15 years ago. The software provides you 100% free Kundli
-                reading.</p>
-            <p>
-                This Kundali making software has gained recognition around the world for providing
-                most accurate and detailed predictions about an individual. If you wish to use the
-                software regularly, mobile app will be very handy. The <a href="https://play.google.com/store/apps/details?id=com.ojassoft.astrosage" rel="nofollow">Kundli making app for Android</a> and <a href="https://itunes.apple.com/in/app/astrosage-kundli/id824705526" rel="nofollow">astrology app for iOS</a> has some more fabulous features.</p>
-            <p>
-                Along with the correctness and precision, you may make Kundali in Hindi, English,
-                Bengali, Kannada, Malayalam, Marathi, Gujarati, and many more languages. We are
-                unceasingly adding more languages. Apart from languages, Janam Kundli app has all
-                the astrological features that you can think of.</p>
-            <p>
-                AstroSage Kundli software also has paid plans for astrologers as well as enthusiasts
-                to allow them in saving unlimited birth charts and also in saving some calculations
-                in the worksheet.</p>
-                </div>
-                <div class="card-view-content">
-                <div class="row equalHeightWrapper">
-    <div class="col-md-3 col-xs-6">
-        <a href="https://www.astrosage.com/free/hindi-kundli.asp" class="icons-widget equalHeightDiv" style="height: 118px;">
-            <div class="f-icons">
-                <img class="lazy" src="/images/lazy-l.gif" data-src="/images/icons/hindi-kundli-img.png" data-srcset="/images/icons/hindi-kundli-img.png" alt="Hindi Kundli">
-                <p>
-                    Hindi Kundli</p>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3 col-xs-6">
-        <a href="https://www.astrosage.com/freechart/matchmaking.asp" class="icons-widget equalHeightDiv" style="height: 118px;">
-            <div class="f-icons">
-                <img class="lazy" src="/images/lazy-l.gif" data-src="/images/icons/ic_match.png" data-srcset="/images/icons/ic_match.png" alt="Matchmaking">
-                <p>
-                    Matchmaking</p>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3 col-xs-6">
-        <a href="https://www.astrosage.com/horoscope/online-horoscope.asp" class="icons-widget m-no equalHeightDiv" style="height: 118px;">
-            <div class="f-icons">
-                <img class="lazy" src="/images/lazy-l.gif" data-src="/images/icons/horoscope-preditions.png" data-srcset="/images/icons/horoscope-preditions.png" alt="Online Horoscope">
-                <p>
-                    Online Horoscope </p>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3 col-xs-6">
-        <a href="https://www.astrosage.com/kundli/kundlisoftware.asp" class="icons-widget m-no equalHeightDiv" style="height: 118px;">
-            <div class="f-icons">
-                <img class="lazy" src="/images/lazy-l.gif" data-src="/images/icons/ic_kundli.png" data-srcset="/images/icons/ic_kundli.png" alt="Kundli Software">
-                <p>
-                    Kundli Software</p>
-            </div>
-        </a>
-    </div>
-</div>
+    button {
+      background: linear-gradient(to right, #2575fc, #6a11cb);
+      color: white;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
 
-<style>   
-    .icons-widget { display:block; border: 1px solid #ffc107; padding:10px; text-align:center; background: #fffde7; border-radius:4px; color:#333 !important; display:flex; justify-content:center; align-items:center; transition:all 0.3s; }
-    .icons-widget:hover {background:#ffecb3;} .icons-widget .f-icons img { width:50px; }
-    .icons-widget p { font-size:20px; margin-top:12px; margin-bottom:0px; color:#333; text-align:center;  }
-    @media (max-width:768px){.icons-widget{margin-bottom:10px; padding:2px;} .m-no { margin-bottom:0px; }}
-</style>
+    button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
 
-                </div>
-            <div class="card-view-content">
-            <h2>
-                Create Online Janam Kundli
-            </h2>
-            <p>
-                This free Janam Kundali by date of birth and time is effective only when you have
-                exact information. Usually, people make mistake by putting wrong birth time, which
-                eventually gives them the incorrect Kundali with absolutely irrelevant predictions.
-                Check your Kundli chart now and prepare yourself for the upcoming adventures.</p>
-            <p>
-                Online Janam Kundli is easy to make. All you need is to put the right information
-                and click on the submit button. Kundli prediction has its roots back from the Vedic
-                times. We have made sure that our free Kundali chart does every justice to the Vedic
-                tradition.</p>
-            <p>
-                AstroSage's free Kundli software provides more than 50 pages report, which covers
-                almost all the aspects of your life. Kundli download is also not very difficult.
-                Just find the download pdf button in your left options after making your detailed
-                Kundali and click on it.</p>
-            <p>
-                If you manage to find a good website, checking Janam Kundli online is always a good
-                idea. After all, astrology is like mathematics, and computer has lesser chances
-                of making mathematical errors.</p>
-            <p>
-                We have various other free services that you may either explore on our website of
-                mobile app. Free online Kundali software offers answers to the general queries,
-                that is why we have got a panel of astrologers who answer your personalized question
-                as a paid service.</p>
-            <p>
-                Online Kundli in Hindi has been most popular among all the languages we offer. Hence,
-                we added a lot of content in Hindi language as per the requirement of our Hindi
-                speaking users. Kundali making in Hindi is very simple. This free Janam Kundli in
-                Hindi is no less from any other language. So, get your free Janam Kundali in Hindi
-                now.</p>
-                </div>
-            <div class="card-view-content">
-            <h2>
-                Try Our Kundli Matching Software Now
-            </h2>
-            <p>
-                Kundli matching for marriage is a common practice in India. Our Janam Kundali matching
-                software is also quite popular because of its accuracy and detailed predictions.
-                As we told earlier that we have majorly Hindi speaking users, Kundli matching in
-                Hindi is most popular on our website.</p>
-                </div>
-            <div class="card-view-content">
-            <h2>
-                Frequently Asked Questions</h2>
-            <div itemscope="" itemtype="https://schema.org/FAQPage">
-                <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">
-                        1. What is Janam Kundli?</h3>
-                    <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <div itemprop="text">
-                            <p>
-                                Janam Kundli is called birth chart in English. It is a map of the sky as seen at
-                                the time of birth. It is the basis of predicting future in astrology.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">
-                        2. Can astrology predict future accurately?</h3>
-                    <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <div itemprop="text">
-                            <p>
-                                Astrology is Vedanga and considered eye of the Vedas. Like Ayurveda &amp; Yoga, astrology
-                                and its branches like Hora, Muhurat &amp; Samhita, it is backbone of Vedas.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">
-                        3. Which is the most accurate Kundli software?</h3>
-                    <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <div itemprop="text">
-                            <p>
-                                Most of the software use NASA algorithm for planetary position calculations. For
-                                remaining calculations like Namvamsa, Shodashvarga and Ashtakvarga, you can use
-                                free AstroSage software which is the most used Vedic astrology software on Internet.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">
-                        4. What is Navamsa chart?</h3>
-                    <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <div itemprop="text">
-                            <p>
-                                This is a division or varga. When a Rasi, i.e. zodiac sign, is subdivided in nine
-                                parts in a particular order, it is called Navamsa. It is sometimes considered as
-                                important as Rasi itself.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
-                    <h3 itemprop="name">
-                        5. What is Lagna chart?</h3>
-                    <div itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                        <div itemprop="text">
-                            <p>
-                                Lagna chart, also called Rasi chart, is the most important chart in Vedic astrology.
-                                It shows Ascendant and planet's position in various signs. This chart along with
-                                other calculations like Vimshottari Dasa &amp; Gochar are used to predict future.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-       
-       <div class="card-view-content">
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="ui-content">
-                    <a class="list-group-item" href="/kundli/how-to-read-kundli.asp">How To Read A Kundli
-                    </a>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="ui-content">
-                    <a class="list-group-item" href="/2025/horoscope-2025.asp">Read Astrology 2025 Predictions
-                    </a>
-                </div>
-            </div>
-        </div>
-        </div>
-    </div>
-    </div>
-    
-<!--#xinclude virtual = "/include/optimized/popupbox.asp"-->
+    video, canvas {
+      margin-top: 15px;
+      border: 2px dashed #aaa;
+      border-radius: 10px;
+      max-width: 100%;
+    }
 
-</div> </div>
+    pre {
+      background: #222;
+      color: #0f0;
+      padding: 15px;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    #output {
+      margin-top: 20px;
+    }
+
+    footer {
+      text-align: center;
+      margin: 40px 0;
+      font-size: 14px;
+      color: #333;
+    }
+
+    footer span {
+      font-weight: bold;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔮 Palm Reading & Kundali Generator</h1>
+
+    <!-- PALM READING SECTION -->
+    <div class="section">
+      <h2>🖐️ Palm Reading</h2>
+      <p>"Your future is in your hands. Let your palm reveal the path."</p>
+      <button onclick="playSound(); openCamera()">📷 Open Camera</button>
+      <button onclick="playSound(); capturePhoto()">📸 Capture</button>
+      <input type="file" id="imageUpload" accept="image/*" />
+
+      <video id="video" width="400" height="300" autoplay playsinline style="display:none;"></video>
+      <canvas id="palmCanvas" width="400" height="500"></canvas>
+
+      <div style="margin-top: 15px;">
+        <button onclick="playSound(); analyzeLines()">🔍 Analyze</button>
+        <button onclick="playSound(); clearCanvas()">♻️ Reset</button>
+      </div>
+
+      <div id="output"></div>
+    </div>
+
+    <!-- KUNDALI SECTION -->
+    <div class="section">
+      <h2>🧘 Kundali Generator</h2>
+      <form id="kundaliForm">
+        <input type="text" name="name" required placeholder="Full Name">
+        <input type="date" name="dob" required>
+        <input type="time" name="tob" required>
+        <input type="text" name="pob" required placeholder="Place of Birth (City)">
+        <button type="submit">Generate Kundali</button>
+      </form>
+      <div id="kundaliResult"></div>
+    </div>
+
+    <footer>
+      🔧 Powered by <span>KUSHAL ViP</span>
+    </footer>
+  </div>
+
+  <!-- Sound -->
+  <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-interface-click-1126.mp3" preload="auto"></audio>
+
+  <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("palmCanvas");
+    const ctx = canvas.getContext("2d");
+    const clickSound = document.getElementById("clickSound");
+    let img = new Image();
+    let drawing = false;
+    let lines = [];
+    let stream;
+
+    function playSound() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
+
+    async function openCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.style.display = "block";
+      } catch (err) {
+        alert("Camera access denied or not available.");
+      }
+    }
+
+    function capturePhoto() {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      video.pause();
+      video.srcObject.getTracks().forEach(track => track.stop());
+      video.style.display = "none";
+    }
+
+    document.getElementById("imageUpload").addEventListener("change", function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        img.onload = function () {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    canvas.addEventListener("mousedown", (e) => {
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+      lines.push([{ x: e.offsetX, y: e.offsetY }]);
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (!drawing) return;
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      lines[lines.length - 1].push({ x: e.offsetX, y: e.offsetY });
+    });
+
+    canvas.addEventListener("mouseup", () => {
+      drawing = false;
+    });
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (img.src) ctx.drawImage(img, 0, 0);
+      lines = [];
+      document.getElementById("output").innerHTML = "";
+    }
+
+    function analyzeLines() {
+      if (lines.length === 0) {
+        alert("Please draw some lines first!");
+        return;
+      }
+
+      let output = "<h3>🔮 Your Palm Reading:</h3><ul>";
+      if (lines.length >= 1) output += "<li><b>Heart Line:</b> Deep emotions and caring nature.</li>";
+      if (lines.length >= 2) output += "<li><b>Head Line:</b> Sharp thinking and decision-making.</li>";
+      if (lines.length >= 3) output += "<li><b>Life Line:</b> Energetic and adventurous spirit.</li>";
+      if (lines.length >= 4) output += "<li><b>Fate Line:</b> A unique and destined life path.</li>";
+      if (lines.length >= 5) output += "<li><b>Extra Lines:</b> Highly intuitive and insightful.</li>";
+      output += "</ul>";
+
+      document.getElementById("output").innerHTML = output;
+    }
+
+    // Kundali Generator Script
+    document.getElementById("kundaliForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const form = new FormData(this);
+      const name = form.get("name");
+      const dob = form.get("dob");
+      const tob = form.get("tob");
+      const pob = form.get("pob");
+
+      const [year, month, day] = dob.split("-");
+      const [hour, minute] = tob.split(":");
+
+      let latitude = 27.7172;   // Kathmandu default
+      let longitude = 85.3240;
+      let timezone = 5.75;
+
+      const userId = "YOUR_USER_ID";   // Replace with your API credentials
+      const apiKey = "YOUR_API_KEY";
+
+      const url = "https://json.astrologyapi.com/v1/basic_horoscope";
+      const body = {
+        day: parseInt(day),
+        month: parseInt(month),
+        year: parseInt(year),
+        hour: parseInt(hour),
+        min: parseInt(minute),
+        lat: latitude,
+        lon: longitude,
+        tzone: timezone
+      };
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Authorization": "Basic " + btoa(userId + ":" + apiKey),
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+
+        if (data && !data.error) {
+          document.getElementById("kundaliResult").innerHTML = `
+            <h3>Kundali for ${name}</h3>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        } else {
+          document.getElementById("kundaliResult").innerHTML = `<p style="color:red;">Error: ${data.message || "Something went wrong."}</p>`;
+        }
+
+      } catch (error) {
+        console.error(error);
+        document.getElementById("kundaliResult").innerHTML = `<p style="color:red;">API call failed. Check credentials or network.</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
